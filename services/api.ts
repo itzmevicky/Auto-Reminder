@@ -62,11 +62,11 @@ const MOCK_CONVERSATIONS: Conversation[] = [
   }
 ];
 
+// Updated to match the "Sent Today, Replies, Total Clients" layout
 const MOCK_STATS: Metric[] = [
-  { label: 'Reminders Sent', value: 21, change: 12, trend: 'up' },
-  { label: 'Active Customers', value: 142, change: 5, trend: 'up' },
+  { label: 'Reminders Sent Today', value: 21, change: 12, trend: 'up' },
   { label: 'Replies Waiting', value: 5, change: -2, trend: 'down' },
-  { label: 'Needs Attention', value: 2, trend: 'neutral' },
+  { label: 'Total Clients', value: 142, change: 5, trend: 'up' },
 ];
 
 const MOCK_ACTIVITY: ActivityLog[] = [

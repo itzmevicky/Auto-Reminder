@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Send, MessageCircle, AlertCircle, Clock, ArrowUpRight, ArrowDownRight, MoreHorizontal, RefreshCcw } from 'lucide-react';
+import { Users, Send, MessageCircle, AlertCircle, Clock, ArrowUpRight, ArrowDownRight, MoreHorizontal, RefreshCcw, Plus, Calendar, Megaphone } from 'lucide-react';
 import { Metric, ActivityLog, Schedule } from '../types';
 import { api } from '../services/api';
 
-export const Dashboard: React.FC = () => {
+interface DashboardProps {
+  onNavigate: (page: string) => void;
+}
+
+export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [stats, setStats] = useState<Metric[] | null>(null);
   const [activity, setActivity] = useState<ActivityLog[] | null>(null);
   const [schedules, setSchedules] = useState<Schedule[] | null>(null);
@@ -47,61 +51,89 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-fade-in w-full">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-        <div>
-          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Good Morning, Owner</h2>
-          <p className="text-slate-500 mt-1 text-lg">Here's what's happening with your business today.</p>
+      
+      {/* Hero / Quick Actions */}
+      <div className="bg-white rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] border border-slate-100 p-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div className="space-y-1">
+             <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Today's Snapshot</h2>
+             <p className="text-slate-500 text-lg">Here is what is happening right now.</p>
+          </div>
+          
+          <div className="flex flex-wrap gap-3 w-full md:w-auto">
+             <button 
+               onClick={() => onNavigate('contacts')}
+               className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-xl font-bold transition-all shadow-sm border border-indigo-100"
+             >
+                <Plus size={18} strokeWidth={2.5} />
+                Add Customer
+             </button>
+             <button 
+               onClick={() => onNavigate('automation')}
+               className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-xl font-bold transition-all shadow-sm border border-indigo-100"
+             >
+                <Calendar size={18} strokeWidth={2.5} />
+                Create Schedule
+             </button>
+             <button 
+               onClick={() => onNavigate('automation')} 
+               className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-xl font-bold transition-all shadow-sm border border-rose-100"
+             >
+                <Megaphone size={18} strokeWidth={2.5} />
+                Blast Reminder
+             </button>
+             <button 
+               onClick={() => onNavigate('inbox')}
+               className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 text-white hover:bg-slate-800 rounded-xl font-bold transition-all shadow-lg shadow-slate-200"
+             >
+                <MessageCircle size={18} strokeWidth={2.5} />
+                Go to Inbox
+             </button>
+          </div>
         </div>
-        <button className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-slate-200 transition-all hover:-translate-y-0.5 font-medium">
-          <Send size={18} />
-          <span>Quick Blast</span>
-        </button>
-      </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {isLoading ? (
-          // Skeleton Loader
-          Array(4).fill(0).map((_, i) => (
-            <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-pulse">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 bg-slate-200 rounded-xl"></div>
-                <div className="w-16 h-6 bg-slate-200 rounded-full"></div>
-              </div>
-              <div className="w-20 h-10 bg-slate-200 rounded mb-2"></div>
-              <div className="w-32 h-4 bg-slate-200 rounded"></div>
-            </div>
-          ))
-        ) : (
-          stats?.map((stat, idx) => (
-            <div key={idx} className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-              <div className="flex justify-between items-start mb-4">
-                <div className={`p-3 rounded-xl ${
-                  idx === 0 ? 'bg-indigo-50 text-indigo-600' :
-                  idx === 1 ? 'bg-emerald-50 text-emerald-600' :
-                  idx === 2 ? 'bg-amber-50 text-amber-600' :
-                  'bg-rose-50 text-rose-600'
-                }`}>
-                  {idx === 0 && <Send size={22} />}
-                  {idx === 1 && <Users size={22} />}
-                  {idx === 2 && <MessageCircle size={22} />}
-                  {idx === 3 && <AlertCircle size={22} />}
-                </div>
-                {stat.change !== undefined && (
-                  <div className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full ${
-                    stat.trend === 'up' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
-                  }`}>
-                    {stat.trend === 'up' ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                    {Math.abs(stat.change)}%
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+           {isLoading ? (
+              Array(3).fill(0).map((_, i) => (
+                <div key={i} className="h-24 bg-slate-50 rounded-2xl animate-pulse"></div>
+              ))
+           ) : stats ? (
+             <>
+               <div className="bg-indigo-50/50 rounded-2xl p-6 border border-indigo-100 flex items-center gap-5 relative overflow-hidden group">
+                  <div className="absolute right-0 top-0 p-16 bg-indigo-200/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-200/30 transition-colors"></div>
+                  <div className="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center text-indigo-600 shrink-0 z-10">
+                     <Send size={28} />
                   </div>
-                )}
-              </div>
-              <h3 className="text-4xl font-bold text-slate-900 tracking-tight mb-1">{stat.value}</h3>
-              <p className="text-sm text-slate-500 font-medium">{stat.label}</p>
-            </div>
-          ))
-        )}
+                  <div className="z-10">
+                     <p className="text-slate-500 font-bold text-sm uppercase tracking-wide">Sent Today</p>
+                     <h3 className="text-4xl font-bold text-slate-900 tracking-tight">{stats.find(s => s.label.includes('Sent'))?.value || 0}</h3>
+                  </div>
+               </div>
+
+               <div className="bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100 flex items-center gap-5 relative overflow-hidden group">
+                  <div className="absolute right-0 top-0 p-16 bg-emerald-200/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-200/30 transition-colors"></div>
+                  <div className="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center text-emerald-600 shrink-0 z-10">
+                     <MessageCircle size={28} />
+                  </div>
+                  <div className="z-10">
+                     <p className="text-slate-500 font-bold text-sm uppercase tracking-wide">Replies Waiting</p>
+                     <h3 className="text-4xl font-bold text-slate-900 tracking-tight">{stats.find(s => s.label.includes('Replie'))?.value || 0}</h3>
+                  </div>
+               </div>
+
+               <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 flex items-center gap-5 relative overflow-hidden group">
+                  <div className="absolute right-0 top-0 p-16 bg-blue-200/20 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-200/30 transition-colors"></div>
+                  <div className="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 shrink-0 z-10">
+                     <Users size={28} />
+                  </div>
+                  <div className="z-10">
+                     <p className="text-slate-500 font-bold text-sm uppercase tracking-wide">Total Clients</p>
+                     <h3 className="text-4xl font-bold text-slate-900 tracking-tight">{stats.find(s => s.label.includes('Total'))?.value || 0}</h3>
+                  </div>
+               </div>
+             </>
+           ) : null}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -151,7 +183,7 @@ export const Dashboard: React.FC = () => {
 
         {/* Upcoming Schedule */}
         <div className="bg-white rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-slate-100 p-8 flex flex-col min-h-[400px]">
-          <h3 className="text-xl font-bold text-slate-900 tracking-tight mb-6">Scheduled Today</h3>
+          <h3 className="text-xl font-bold text-slate-900 tracking-tight mb-6">Running Today</h3>
           <div className="space-y-4 flex-1">
             {isLoading ? (
                Array(3).fill(0).map((_, i) => (
@@ -173,7 +205,10 @@ export const Dashboard: React.FC = () => {
                <p className="text-slate-400 text-center py-8">No schedules active today.</p>
             )}
           </div>
-          <button className="w-full mt-6 py-3 border-2 border-dashed border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-200 text-sm font-bold transition-all hover:bg-indigo-50/20">
+          <button 
+             onClick={() => onNavigate('automation')}
+             className="w-full mt-6 py-3 border-2 border-dashed border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-200 text-sm font-bold transition-all hover:bg-indigo-50/20"
+          >
             + Add New Schedule
           </button>
         </div>

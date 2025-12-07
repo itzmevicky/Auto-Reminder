@@ -152,11 +152,11 @@ export const Inbox: React.FC = () => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col w-full h-full bg-[#F8FAFC] min-w-0 relative z-10">
+      <div className="flex-1 flex flex-col w-full h-full bg-[#EFEAE2] min-w-0 relative z-10">
         {activeConversation ? (
           <>
             {/* Chat Header */}
-            <div className="px-6 py-4 bg-white/80 backdrop-blur-md border-b border-slate-100 flex justify-between items-center shadow-sm shrink-0 z-10">
+            <div className="px-6 py-4 bg-white/90 backdrop-blur-md border-b border-slate-100 flex justify-between items-center shadow-sm shrink-0 z-10">
               <div className="flex items-center gap-4">
                 <button 
                     className="md:hidden p-2 -ml-2 text-slate-500 hover:text-slate-800" 
@@ -189,19 +189,20 @@ export const Inbox: React.FC = () => {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-[url('https://site-assets.fontawesome.com/releases/v6.5.1/svgs/solid/message-lines.svg')] bg-fixed">
+              {/* Note: In a real app the bg pattern would be a subtle texture */}
               {activeConversation.messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] md:max-w-[65%] rounded-2xl p-4 shadow-sm relative text-sm md:text-base leading-relaxed ${
+                  <div className={`max-w-[85%] md:max-w-[65%] rounded-xl px-4 py-2 shadow-sm relative text-sm md:text-base leading-relaxed ${
                     msg.sender === 'user' 
-                      ? 'bg-indigo-600 text-white rounded-tr-none shadow-indigo-200' 
-                      : 'bg-white text-slate-700 rounded-tl-none border border-slate-100 shadow-slate-200'
+                      ? 'bg-[#E7FFDB] text-slate-900 rounded-tr-none' 
+                      : 'bg-white text-slate-900 rounded-tl-none'
                   }`}>
-                    <p>{msg.text}</p>
-                    <div className={`flex items-center justify-end gap-1 mt-1.5 text-[10px] font-medium ${msg.sender === 'user' ? 'text-indigo-200' : 'text-slate-400'}`}>
-                      <span>{msg.timestamp}</span>
+                    <p className="mr-8">{msg.text}</p>
+                    <div className="flex items-center justify-end gap-1 mt-1 absolute bottom-1 right-2">
+                      <span className="text-[10px] text-slate-400/80 font-medium">{msg.timestamp}</span>
                       {msg.sender === 'user' && (
-                        <CheckCheck size={14} className="text-indigo-200" />
+                        <CheckCheck size={14} className="text-sky-500" />
                       )}
                     </div>
                   </div>
@@ -211,22 +212,22 @@ export const Inbox: React.FC = () => {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 bg-white border-t border-slate-100 shrink-0">
+            <div className="p-3 bg-[#F0F2F5] shrink-0">
               <div className="relative flex items-end gap-2 w-full">
-                <button className="p-3 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-50 mb-1 hidden sm:block transition-colors">
-                  <Paperclip size={20} />
+                <button className="p-3 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-200 mb-1 transition-colors">
+                  <Paperclip size={24} />
                 </button>
-                <div className="flex-1 bg-slate-50 rounded-2xl border border-slate-200 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-400 transition-all flex flex-col shadow-inner">
+                <div className="flex-1 bg-white rounded-3xl border-none focus-within:ring-0 transition-all flex flex-col shadow-sm py-1 px-4">
                   {/* AI Suggestion Chip */}
                   {inputText.length === 0 && (
-                    <div className="px-3 pt-2">
+                    <div className="pt-2 pb-1">
                       <button 
                          onClick={handleAISuggestion}
                          disabled={isSuggesting}
-                         className="text-xs flex items-center gap-1.5 text-indigo-600 bg-indigo-100/50 px-2.5 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors w-fit font-medium"
+                         className="text-xs flex items-center gap-1.5 text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full hover:bg-indigo-100 transition-colors w-fit font-bold"
                       >
                          <Sparkles size={12} className={isSuggesting ? 'animate-pulse' : ''} />
-                         {isSuggesting ? 'Generating suggestion...' : 'Auto-suggest reply'}
+                         {isSuggesting ? 'Generating suggestion...' : 'AI Suggest Reply'}
                       </button>
                     </div>
                   )}
@@ -239,28 +240,30 @@ export const Inbox: React.FC = () => {
                         handleSendMessage();
                       }
                     }}
-                    placeholder="Type your message..."
-                    className="w-full bg-transparent border-none focus:ring-0 resize-none p-3 max-h-32 text-slate-800 placeholder:text-slate-400"
+                    placeholder="Type a message"
+                    className="w-full bg-transparent border-none focus:ring-0 resize-none py-3 max-h-32 text-slate-800 placeholder:text-slate-400 text-sm md:text-base"
                     rows={1}
                   />
                 </div>
                 <button 
                   onClick={handleSendMessage}
                   disabled={!inputText.trim()}
-                  className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-500/20 active:scale-95 mb-1"
+                  className="p-3 bg-[#00A884] text-white rounded-full hover:bg-[#008f6f] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md active:scale-95 mb-1"
                 >
-                  <Send size={20} />
+                  <Send size={20} className="ml-0.5" />
                 </button>
               </div>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-slate-400 bg-slate-50/50">
-            <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-6 shadow-xl shadow-slate-200 border border-slate-100 transform rotate-12">
-              <Send size={40} className="opacity-80 text-indigo-500 -rotate-12" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900">Your Inbox</h3>
-            <p className="mt-2 text-slate-500">Select a conversation to start messaging</p>
+          <div className="flex-1 flex flex-col items-center justify-center text-slate-400 bg-[#F0F2F5]">
+             <div className="text-center p-8 max-w-md">
+                <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-md">
+                    <Send size={40} className="text-[#00A884] ml-1" />
+                </div>
+                <h3 className="text-2xl font-light text-slate-800 mb-2">WhatsApp Web CRM</h3>
+                <p className="text-slate-500 text-sm">Send and receive messages without keeping your phone online.<br/>Use AutoCRM on up to 4 linked devices and 1 phone.</p>
+             </div>
           </div>
         )}
       </div>

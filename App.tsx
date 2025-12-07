@@ -32,14 +32,14 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard': return <Dashboard />;
+      case 'dashboard': return <Dashboard onNavigate={setActiveTab} />;
       case 'contacts': return <Contacts />;
       case 'templates': return <Templates />;
       case 'automation': return <Automation />;
       case 'inbox': return <Inbox />;
       case 'analytics': return <Analytics />;
       case 'billing': return <Billing />;
-      default: return <Dashboard />;
+      default: return <Dashboard onNavigate={setActiveTab} />;
     }
   };
 
